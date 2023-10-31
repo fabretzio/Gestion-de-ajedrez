@@ -8,7 +8,7 @@ public class Partida {
 
     private Juez arbitro;
 
-    private Date fecha;
+    private String fecha;
 
     private String tipo;
 
@@ -46,11 +46,11 @@ public class Partida {
         this.arbitro = arbitro;
     }
 
-    public Date getFecha() {
+    public String getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(String fecha) {
         this.fecha = fecha;
     }
 
@@ -70,7 +70,7 @@ public class Partida {
         this.ganador = ganador;
     }
 
-    public Partida(int id, Jugador jugadorUno, Jugador jugadorDos, Juez arbitro, Date fecha, String tipo, Jugador ganador) {
+    public Partida(int id, Jugador jugadorUno, Jugador jugadorDos, Juez arbitro, String fecha, String tipo, Jugador ganador) {
         this.id = id;
         this.jugadorUno = jugadorUno;
         this.jugadorDos = jugadorDos;
