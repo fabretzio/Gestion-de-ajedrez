@@ -4,12 +4,22 @@ import java.util.Scanner;
 public class Main {
 
     static Scanner entrada = new Scanner(System.in);
-    static ArrayList<Personas> participantes;
-    static ArrayList<Personas> jueces;
-    static ArrayList<Partida> partidas;
+    static ArrayList<Personas> participantes = new ArrayList<>();
+    static ArrayList<Personas> jueces = new ArrayList<>();
+    static ArrayList<Partida> partidas = new ArrayList<>();
 
 
     public static void main(String[] args) {
+
+        Personas primerParticipante = new Jugador(1, "Fabrizio", "Delgado", "51370967", 0, "Uruguay", 27);
+        Personas segundoParticipante = new Jugador(2, "Pelado", "Picone", "51370967", 0, "Uruguay", 59);
+        Personas primerJuez = new Juez(1, "Roberto", "Carlos", "51370967", "Uruguay", 3);
+        Partida primerPartida = new Partida(1, (Jugador) primerParticipante, (Jugador) segundoParticipante, (Juez) primerJuez, "31/10/2023", "regional", (Jugador) primerParticipante);
+
+        participantes.add(primerParticipante);
+        participantes.add(segundoParticipante);
+        jueces.add(primerJuez);
+        partidas.add(primerPartida);
 
         System.out.println("-- BIENVENIDO AL MENU --\n");
         int opcion = 0;
@@ -25,16 +35,59 @@ public class Main {
             System.out.println("8. Eliminar partida"); //
             System.out.println("9. Modificar partida"); //
             System.out.println("10. Mostrar todos los jugadores");
-            System.out.println("10. Mostrar todas las partidas de un jugador");
-            System.out.println("10. Mostrar todas las partidas de una fecha");
-
-
-
+            System.out.println("11. Mostrar todas las partidas de un jugador");
+            System.out.println("12. Mostrar todas las partidas de una fecha");
 
             opcion = Integer.parseInt(entrada.nextLine());
 
             switch(opcion){
                 case 1:{
+                    agregarJugador();
+                    break;
+                }
+                case 2:{
+                    eliminarJugador();
+                    break;
+                }
+                case 3:{
+                    modificarJugador();
+                    break;
+                }
+                case 4:{
+                    agregarArbitro();
+                    break;
+                }
+                case 5:{
+                    eliminarArbitro();
+                    break;
+                }
+                case 6:{
+                    modificarArbitro();
+                    break;
+                }
+                case 7:{
+                    agregarPartida();
+                    break;
+                }
+                case 8:{
+                    eliminarPartida();
+                    break;
+                }
+                case 9:{
+                    modificarPartida();
+                    break;
+                }
+                case 10:{
+                    System.out.println(listarParticipantes());
+                    break;
+                }
+                case 11:{
+                    partidasDe();;
+                    break;
+                }
+                case 12:{
+                    partidasFecha();
+                    break;
                 }
                 default:{
                     if(opcion!=-1)
@@ -225,22 +278,38 @@ public class Main {
             System.out.println(listarParticipantes());
             int opcion2 = Integer.parseInt(entrada.nextLine());
             Personas jugadorDos = buscarPorId(opcion2);
-            System.out.println(" ** SELECCIONE EL ARBITRO **");
-            System.out.println(listarArbitros());
-            int opcion3 = Integer.parseInt(entrada.nextLine());
-            Personas juez = buscarPorIdArbitro(opcion3);
             System.out.println("INGRESE FECHA:");
             String fecha = entrada.nextLine();
             System.out.println("INGRESE TIPO DE PARTIDA:");
             String tipo = entrada.nextLine();
-            if(tipo != "regional" || tipo != "nacional" || tipo != "internacional"){
+            if(tipo.equals("regional") || tipo.equals("nacional") || tipo.equals("internacional")){
+
+                System.out.println(" ** SELECCIONE EL ARBITRO **");
+                System.out.println(listarArbitros());
+                int opcion3 = Integer.parseInt(entrada.nextLine());
+                Personas juez = buscarPorIdArbitro(opcion3);
+
+                if(tipo.equals("nacional")){
+                    if( ((Juez) juez).getNivel() < 2 ){
+                        System.out.println("ARBITRO NO APTO PARA ÉSTA PARTIDA.");
+                        return false;
+                    }
+                }
+                if(tipo.equals("internacional")){
+                    if( ((Juez) juez).getNivel() < 3 ){
+                        System.out.println("ARBITRO NO APTO PARA ÉSTA PARTIDA.");
+                        return false;
+                    }
+                }
+
+                Partida unaPartida = new Partida(id, (Jugador) jugadorUno, (Jugador) jugadorDos,(Juez) juez, fecha, tipo,(Jugador) jugadorUno);
+                partidas.add(unaPartida);
+                return true;
+            }
+            else{
                 System.out.println("INGRESE TIPO DE PARTIDA CORRECTO.");
                 return false;
             }
-
-            Partida unaPartida = new Partida(id, (Jugador) jugadorUno, (Jugador) jugadorDos,(Juez) juez, fecha, tipo,(Jugador) jugadorUno);
-            partidas.add(unaPartida);
-            return true;
         }
         catch(Exception e){
             return false;
@@ -278,90 +347,119 @@ public class Main {
             System.out.println("INGRESE TIPO DE PARTIDA:");
             String tipo = entrada.nextLine();
 
-            if(tipo != "regional" || tipo != "nacional" || tipo != "internacional"){
+            if(tipo.equals("regional") || tipo.equals("nacional") || tipo.equals("internacional")){
+
+                System.out.println(" ** SELECCIONE EL ARBITRO **");
+                System.out.println(listarArbitros());
+                int opcion3 = Integer.parseInt(entrada.nextLine());
+                Personas juez = buscarPorIdArbitro(opcion3);
+
+                if(tipo.equals("nacional")){
+                    if( ((Juez) juez).getNivel() < 2 ){
+                        System.out.println("ARBITRO NO APTO PARA ÉSTA PARTIDA.");
+                        return false;
+                    }
+                }
+                if(tipo.equals("internacional")){
+                    if( ((Juez) juez).getNivel() < 3 ){
+                        System.out.println("ARBITRO NO APTO PARA ÉSTA PARTIDA.");
+                        return false;
+                    }
+                }
+
+                System.out.println("INGRESE FECHA:");
+                String fecha = entrada.nextLine();
+
+                System.out.println(" ** SELECCIONE EL GANADOR **" +
+                        "   -1:"+jugadorUno.getNombre()+ " " + jugadorUno.getApellido()
+                        +"   -2:"+jugadorDos.getNombre()+ " " + jugadorDos.getApellido());
+
+                int opcion4 = Integer.parseInt(entrada.nextLine());
+                Personas ganador = buscarPorId(opcion4);
+
+                if(ganador.getId() == jugadorUno.getId() && ((Jugador) jugadorDos).getElo() == 0){
+
+                    ((Jugador) jugadorUno).setElo(((Jugador) jugadorUno).getElo()+10);
+
+                }else if(((Jugador) jugadorUno).getElo() < ((Jugador) jugadorDos).getElo()) {
+
+                    ((Jugador) jugadorUno).setElo(((Jugador) jugadorUno).getElo() + (((Jugador) jugadorDos).getElo() - ((Jugador) jugadorUno).getElo()) / 4);
+                    ((Jugador) jugadorDos).setElo(((Jugador) jugadorDos).getElo() - (((Jugador) jugadorDos).getElo() - ((Jugador) jugadorUno).getElo()) / 4);
+
+                }else{
+
+                    ((Jugador) jugadorUno).setElo( ((Jugador) jugadorUno).getElo() + (((Jugador) jugadorUno).getElo() - ((Jugador) jugadorDos).getElo())/8);
+                    ((Jugador) jugadorDos).setElo( ((Jugador) jugadorDos).getElo() - (((Jugador) jugadorUno).getElo() - ((Jugador) jugadorDos).getElo())/8);
+
+                }
+
+                if(ganador.getId() == jugadorDos.getId() &&((Jugador) jugadorUno).getElo()== 0){
+
+                    ((Jugador) jugadorDos).setElo( ((Jugador) jugadorDos).getElo()+10);
+
+                }else if(((Jugador) jugadorDos).getElo() < ((Jugador) jugadorUno).getElo()){
+
+                    ((Jugador) jugadorDos).setElo( ((Jugador) jugadorDos).getElo() + (((Jugador) jugadorUno).getElo() - ((Jugador) jugadorDos).getElo())/4);
+
+                    ((Jugador) jugadorUno).setElo( ((Jugador) jugadorUno).getElo() - (((Jugador) jugadorUno).getElo() - ((Jugador) jugadorDos).getElo())/4);
+
+                }else{
+
+                    ((Jugador) jugadorDos).setElo( ((Jugador) jugadorDos).getElo() + (((Jugador) jugadorDos).getElo() - ((Jugador) jugadorUno).getElo())/8);
+
+                    ((Jugador) jugadorUno).setElo( ((Jugador) jugadorUno).getElo() - (((Jugador) jugadorDos).getElo() - ((Jugador) jugadorUno).getElo())/8);
+
+                }
+
+                modificado.setJugadorUno((Jugador) jugadorUno);
+                modificado.setJugadorDos((Jugador) jugadorDos);
+                modificado.setArbitro((Juez) juez);
+                modificado.setFecha(fecha);
+                modificado.setTipo(tipo);
+                modificado.setGanador((Jugador) ganador);
+                partidas.set((modificado.getId()-1), modificado);
+                return true;
+
+            }else{
                 System.out.println("INGRESE TIPO DE PARTIDA CORRECTO.");
                 return false;
             }
-
-            System.out.println(" ** SELECCIONE EL ARBITRO **");
-            System.out.println(listarArbitros());
-            int opcion3 = Integer.parseInt(entrada.nextLine());
-            Personas juez = buscarPorIdArbitro(opcion3);
-
-            if(tipo.equals("nacional")){
-                if( ((Juez) juez).getNivel() < 2 ){
-                    System.out.println("ARBITRO NO APTO PARA ÉSTA PARTIDA.");
-                    return false;
-                }
-            }
-            if(tipo.equals("internacional")){
-                if( ((Juez) juez).getNivel() < 3 ){
-                    System.out.println("ARBITRO NO APTO PARA ÉSTA PARTIDA.");
-                    return false;
-                }
-            }
-
-            System.out.println("INGRESE FECHA:");
-            String fecha = entrada.nextLine();
-
-            System.out.println(" ** SELECCIONE EL GANADOR **" +
-                                "   -1:"+jugadorUno.getNombre()+ " " + jugadorUno.getApellido()
-                               +"   -2:"+jugadorDos.getNombre()+ " " + jugadorDos.getApellido());
-
-            int opcion4 = Integer.parseInt(entrada.nextLine());
-            Personas ganador = buscarPorId(opcion4);
-
-            if(ganador.getId() == jugadorUno.getId() && ((Jugador) jugadorDos).getElo() == 0){
-
-                ((Jugador) jugadorUno).setElo(((Jugador) jugadorUno).getElo()+10);
-
-            }else if(((Jugador) jugadorUno).getElo() < ((Jugador) jugadorDos).getElo()) {
-
-                ((Jugador) jugadorUno).setElo(((Jugador) jugadorUno).getElo() + (((Jugador) jugadorDos).getElo() - ((Jugador) jugadorUno).getElo()) / 4);
-                ((Jugador) jugadorDos).setElo(((Jugador) jugadorDos).getElo() - (((Jugador) jugadorDos).getElo() - ((Jugador) jugadorUno).getElo()) / 4);
-
-            }else{
-
-                ((Jugador) jugadorUno).setElo( ((Jugador) jugadorUno).getElo() + (((Jugador) jugadorUno).getElo() - ((Jugador) jugadorDos).getElo())/8);
-                ((Jugador) jugadorDos).setElo( ((Jugador) jugadorDos).getElo() - (((Jugador) jugadorUno).getElo() - ((Jugador) jugadorDos).getElo())/8);
-
-            }
-
-            if(ganador.getId() == jugadorDos.getId() &&((Jugador) jugadorUno).getElo()== 0){
-
-                ((Jugador) jugadorDos).setElo( ((Jugador) jugadorDos).getElo()+10);
-
-            }else if(((Jugador) jugadorDos).getElo() < ((Jugador) jugadorUno).getElo()){
-
-                ((Jugador) jugadorDos).setElo( ((Jugador) jugadorDos).getElo() + (((Jugador) jugadorUno).getElo() - ((Jugador) jugadorDos).getElo())/4);
-
-                ((Jugador) jugadorUno).setElo( ((Jugador) jugadorUno).getElo() - (((Jugador) jugadorUno).getElo() - ((Jugador) jugadorDos).getElo())/4);
-
-            }else{
-
-                ((Jugador) jugadorDos).setElo( ((Jugador) jugadorDos).getElo() + (((Jugador) jugadorDos).getElo() - ((Jugador) jugadorUno).getElo())/8);
-
-                ((Jugador) jugadorUno).setElo( ((Jugador) jugadorUno).getElo() - (((Jugador) jugadorDos).getElo() - ((Jugador) jugadorUno).getElo())/8);
-
-            }
-
-            modificado.setJugadorUno((Jugador) jugadorUno);
-            modificado.setJugadorDos((Jugador) jugadorDos);
-            modificado.setArbitro((Juez) juez);
-            modificado.setFecha(fecha);
-            modificado.setTipo(tipo);
-            modificado.setGanador((Jugador) ganador);
-            partidas.set((modificado.getId()-1), modificado);
-            return true;
         }
         else
         {
-            System.out.println("El id no pertenece a un libro");
+            System.out.println("El id no pertenece a una partida");
         }
 
         return false;
     }
+
+    private static void partidasDe(){
+        System.out.println(" ** SELECCIONE EL PARTICIPANTE PARA VER SUS PARTIDAS **");
+        System.out.println(listarParticipantes());
+        int opcion = Integer.parseInt(entrada.nextLine());
+        Personas buscado = buscarPorId(opcion);
+
+        for (int i = 0; i <partidas.size() ; i++) {
+            if(partidas.get(i).getJugadorUno().getId() == buscado.getId() || partidas.get(i).getJugadorDos().getId() == buscado.getId()){
+                System.out.println(partidas.get(i).toString());
+            }
+        }
+    }
+
+    private static void partidasFecha(){
+        System.out.println(" ** ESCRIBA UNA FECHA PARA VER SUS PARTIDAS **");
+        String fecha = entrada.nextLine();
+
+        for (int i = 0; i < partidas.size(); i++) {
+            if(partidas.get(i).getFecha().equals(fecha)){
+                System.out.println(partidas.get(i).toString());
+            }
+        }
+    }
     private static int generarIdParticipantes(){
+        if(participantes.size() == 0){
+            return 1;
+        }
         return participantes.size()+1;
     }
     private static int generarIdJueces(){
